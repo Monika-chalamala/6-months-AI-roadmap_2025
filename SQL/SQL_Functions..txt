@@ -1,0 +1,985 @@
+Enter password: *****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 21
+Server version: 8.0.43 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create table employee(id int, name varchar(30), work_date int, daily_typing_pages int)
+    -> ;
+ERROR 1046 (3D000): No database selected
+mysql> use nit;
+Database changed
+mysql> create table employee(id int, name varchar(30), work_date int, daily_typing_pages int);
+Query OK, 0 rows affected (0.24 sec)
+
+mysql> select * from employee;
+Empty set (0.01 sec)
+
+mysql> insert into employee values(1,'John',2007-01-24,250),(2,'Ram',2007-05-27,220),(3,'Jack',2007-05-06,170),(3,'Jack',2007-04-06,100),(4,'Jill',2007-04-06,220),(5,'Zara',2007-06-06,300),(5,'Zara',2007-02-06,350);
+Query OK, 7 rows affected (0.03 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee;
++------+------+-----------+--------------------+
+| id   | name | work_date | daily_typing_pages |
++------+------+-----------+--------------------+
+|    1 | John |      1982 |                250 |
+|    2 | Ram  |      1975 |                220 |
+|    3 | Jack |      1996 |                170 |
+|    3 | Jack |      1997 |                100 |
+|    4 | Jill |      1997 |                220 |
+|    5 | Zara |      1995 |                300 |
+|    5 | Zara |      1999 |                350 |
++------+------+-----------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> drop employee;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'employee' at line 1
+mysql> drop table employee;
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> create table employee(id int, name varchar(30), work_date DATE, daily_typing_pages int);
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> insert into employee values(1,'John',2007-01-24,250),(2,'Ram',2007-05-27,220),(3,'Jack',2007-05-06,170),(3,'Jack',2007-04-06,100),(4,'Jill',2007-04-06,220),(5,'Zara',2007-06-06,300),(5,'Zara',2007-02-06,350);
+ERROR 1292 (22007): Incorrect date value: '1982' for column 'work_date' at row 1
+mysql> select * from employee;
+Empty set (0.00 sec)
+
+mysql> insert into employee values(1,'John','2007-01-24',250),(2,'Ram','2007-05-27',220),(3,'Jack','2007-05-06',170),(3,'Jack','2007-04-06',100),(4,'Jill','2007-04-06',220),(5,'Zara','2007-06-06',300),(5,'Zara','2007-02-06',350);
+Query OK, 7 rows affected (0.01 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select count(*) from employee;
++----------+
+| count(*) |
++----------+
+|        7 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> select count(*) from employee
+    -> where name="Zara";
++----------+
+| count(*) |
++----------+
+|        2 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select max(daily_typing_pages)
+    -> from employee;
++-------------------------+
+| max(daily_typing_pages) |
++-------------------------+
+|                     350 |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select id, name, max(daily_typing_pages)
+    -> from employee group by name;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'nit.employee.id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> -- Check SQL modes
+mysql> SELECT @@sql_mode;
++-----------------------------------------------------------------------------------------------------------------------+
+| @@sql_mode                                                                                                            |
++-----------------------------------------------------------------------------------------------------------------------+
+| ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION |
++-----------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql>
+mysql> -- Remove only_full_group_by temporarily for current session
+mysql> SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> -- Or permanently edit MySQL config (my.cnf / my.ini):
+mysql> -- sql_mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
+mysql> -- sql_mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
+mysql> select min(daily_typing_pages) least, max(daily_typing_pages) max from employee;
++-------+------+
+| least | max  |
++-------+------+
+|   100 |  350 |
++-------+------+
+1 row in set (0.00 sec)
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select min(daily_typing_pages) from employee;
++-------------------------+
+| min(daily_typing_pages) |
++-------------------------+
+|                     100 |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(daily_typing_pages) from employee;
++-------------------------+
+| avg(daily_typing_pages) |
++-------------------------+
+|                230.0000 |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select name, avg(daily_typing_pages) from employee group by name;
++------+-------------------------+
+| name | avg(daily_typing_pages) |
++------+-------------------------+
+| John |                250.0000 |
+| Ram  |                220.0000 |
+| Jack |                135.0000 |
+| Jill |                220.0000 |
+| Zara |                325.0000 |
++------+-------------------------+
+5 rows in set (0.01 sec)
+
+mysql> select id,name,work_date, min(daily_typing_pages) from employee group by name;
++------+------+------------+-------------------------+
+| id   | name | work_date  | min(daily_typing_pages) |
++------+------+------------+-------------------------+
+|    1 | John | 2007-01-24 |                     250 |
+|    2 | Ram  | 2007-05-27 |                     220 |
+|    3 | Jack | 2007-05-06 |                     100 |
+|    4 | Jill | 2007-04-06 |                     220 |
+|    5 | Zara | 2007-06-06 |                     300 |
++------+------+------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select sum(daily_typing_pages) from employee;
++-------------------------+
+| sum(daily_typing_pages) |
++-------------------------+
+|                    1610 |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select name, sum(daily_typing_pages) from employee group by name;
++------+-------------------------+
+| name | sum(daily_typing_pages) |
++------+-------------------------+
+| John |                     250 |
+| Ram  |                     220 |
+| Jack |                     270 |
+| Jill |                     220 |
+| Zara |                     650 |
++------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select sqrt(16);
++----------+
+| sqrt(16) |
++----------+
+|        4 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select name, sqrt(daily_typing_pages) from employee;
++------+--------------------------+
+| name | sqrt(daily_typing_pages) |
++------+--------------------------+
+| John |       15.811388300841896 |
+| Ram  |       14.832396974191326 |
+| Jack |       13.038404810405298 |
+| Jack |                       10 |
+| Jill |       14.832396974191326 |
+| Zara |       17.320508075688775 |
+| Zara |       18.708286933869708 |
++------+--------------------------+
+7 rows in set (0.00 sec)
+
+mysql> select rand(), rand(), rand();
++--------------------+--------------------+--------------------+
+| rand()             | rand()             | rand()             |
++--------------------+--------------------+--------------------+
+| 0.3111938753269556 | 0.3682521873789394 | 0.9076793416474753 |
++--------------------+--------------------+--------------------+
+1 row in set (0.00 sec)
+
+mysql> select rand(1), rand(), rand();
++---------------------+--------------------+--------------------+
+| rand(1)             | rand()             | rand()             |
++---------------------+--------------------+--------------------+
+| 0.40540353712197724 | 0.4336401768342035 | 0.4451628899622363 |
++---------------------+--------------------+--------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from employee;
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from employee order by rand();
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    2 | Ram  | 2007-05-27 |                220 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    5 | Zara | 2007-02-06 |                350 |
+|    1 | John | 2007-01-24 |                250 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from employee order by rand();
++------+------+------------+--------------------+
+| id   | name | work_date  | daily_typing_pages |
++------+------+------------+--------------------+
+|    1 | John | 2007-01-24 |                250 |
+|    3 | Jack | 2007-04-06 |                100 |
+|    4 | Jill | 2007-04-06 |                220 |
+|    5 | Zara | 2007-06-06 |                300 |
+|    2 | Ram  | 2007-05-27 |                220 |
+|    3 | Jack | 2007-05-06 |                170 |
+|    5 | Zara | 2007-02-06 |                350 |
++------+------+------------+--------------------+
+7 rows in set (0.00 sec)
+
+mysql> select concat('FIRST', 'SECOND');
++---------------------------+
+| concat('FIRST', 'SECOND') |
++---------------------------+
+| FIRSTSECOND               |
++---------------------------+
+1 row in set (0.00 sec)
+
+mysql> select concat(id, name, work_date) from employee;
++-----------------------------+
+| concat(id, name, work_date) |
++-----------------------------+
+| 1John2007-01-24             |
+| 2Ram2007-05-27              |
+| 3Jack2007-05-06             |
+| 3Jack2007-04-06             |
+| 4Jill2007-04-06             |
+| 5Zara2007-06-06             |
+| 5Zara2007-02-06             |
++-----------------------------+
+7 rows in set (0.00 sec)
+
+mysql> select abs(2);
++--------+
+| abs(2) |
++--------+
+|      2 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select abs(-2);
++---------+
+| abs(-2) |
++---------+
+|       2 |
++---------+
+1 row in set (0.00 sec)
+
+mysql> acos(1);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'acos(1)' at line 1
+mysql> select acos(1);
++---------+
+| acos(1) |
++---------+
+|       0 |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select asin(1);
++--------------------+
+| asin(1)            |
++--------------------+
+| 1.5707963267948966 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select atan(1);
++--------------------+
+| atan(1)            |
++--------------------+
+| 0.7853981633974483 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select atan(3,6);
++--------------------+
+| atan(3,6)          |
++--------------------+
+| 0.4636476090008061 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select ceiling(3.46);
++---------------+
+| ceiling(3.46) |
++---------------+
+|             4 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select ceil(-6.43);
++-------------+
+| ceil(-6.43) |
++-------------+
+|          -6 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select conv(5,16,2);
++--------------+
+| conv(5,16,2) |
++--------------+
+| 101          |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> select cos(90);
++---------------------+
+| cos(90)             |
++---------------------+
+| -0.4480736161291701 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select cot(1);
++--------------------+
+| cot(1)             |
++--------------------+
+| 0.6420926159343306 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select degrees(PI());
++---------------+
+| degrees(PI()) |
++---------------+
+|           180 |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> select exp(3);
++--------------------+
+| exp(3)             |
++--------------------+
+| 20.085536923187668 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select floor(7.55);
++-------------+
+| floor(7.55) |
++-------------+
+|           7 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select format(423423234.65434453,2);
++------------------------------+
+| format(423423234.65434453,2) |
++------------------------------+
+| 423,423,234.65               |
++------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select greatest(3,5,1,8,33,99,34,55,34,55,67,43
+    -> select greatest(3,5,1,8,33,99,34,55,34,55,67,43);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select greatest(3,5,1,8,33,99,34,55,34,55,67,43)' at line 2
+mysql> select greatest(3,5,1,8,33,99,34,55,34,55,67,43);
++-------------------------------------------+
+| greatest(3,5,1,8,33,99,34,55,34,55,67,43) |
++-------------------------------------------+
+|                                        99 |
++-------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select interval(6,1,2,3,4,5,6,7,8,9,10);
++----------------------------------+
+| interval(6,1,2,3,4,5,6,7,8,9,10) |
++----------------------------------+
+|                                6 |
++----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select interval(6,1,2,3,4,5,6,7,8,9,10);
++----------------------------------+
+| interval(6,1,2,3,4,5,6,7,8,9,10) |
++----------------------------------+
+|                                6 |
++----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select least(3,5,1,8,33,99,34,55,67,43);
++----------------------------------+
+| least(3,5,1,8,33,99,34,55,67,43) |
++----------------------------------+
+|                                1 |
++----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select log(45);
++--------------------+
+| log(45)            |
++--------------------+
+| 3.8066624897703196 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select log(2,65536);
++--------------+
+| log(2,65536) |
++--------------+
+|           16 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> select log10(100);
++------------+
+| log10(100) |
++------------+
+|          2 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select mod(29,3);
++-----------+
+| mod(29,3) |
++-----------+
+|         2 |
++-----------+
+1 row in set (0.00 sec)
+
+mysql> select oct(12);
++---------+
+| oct(12) |
++---------+
+| 14      |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select pi();
++----------+
+| pi()     |
++----------+
+| 3.141593 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select power(3,3);
++------------+
+| power(3,3) |
++------------+
+|         27 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select radians(90);
++--------------------+
+| radians(90)        |
++--------------------+
+| 1.5707963267948966 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select round(5.693893);
++-----------------+
+| round(5.693893) |
++-----------------+
+|               6 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> select round(5.693893,2);
++-------------------+
+| round(5.693893,2) |
++-------------------+
+|              5.69 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> select sign(-4.65);
++-------------+
+| sign(-4.65) |
++-------------+
+|          -1 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select sign(0);
++---------+
+| sign(0) |
++---------+
+|       0 |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select sign(4.65);
++------------+
+| sign(4.65) |
++------------+
+|          1 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select sin(90);
++--------------------+
+| sin(90)            |
++--------------------+
+| 0.8939966636005579 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select sqrt(49);
++----------+
+| sqrt(49) |
++----------+
+|        7 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select std(price) std deviation from cars;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'deviation from cars' at line 1
+mysql> select tan(45);
++--------------------+
+| tan(45)            |
++--------------------+
+| 1.6197751905438615 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select truncate(7.536432,2);
++----------------------+
+| truncate(7.536432,2) |
++----------------------+
+|                 7.53 |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> select ascii('2');
++------------+
+| ascii('2') |
++------------+
+|         50 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select ascii('dx');
++-------------+
+| ascii('dx') |
++-------------+
+|         100 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> select bin(12);
++---------+
+| bin(12) |
++---------+
+| 1100    |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select bit_length('text');
++--------------------+
+| bit_length('text') |
++--------------------+
+|                 32 |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select char(77,121,83,81,'76');
++--------------------------------------------------+
+| char(77,121,83,81,'76')                          |
++--------------------------------------------------+
+| 0x4D7953514C                                     |
++--------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select char_length("text");
++---------------------+
+| char_length("text") |
++---------------------+
+|                   4 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select concat('My', 'S', 'QL');
++-------------------------+
+| concat('My', 'S', 'QL') |
++-------------------------+
+| MySQL                   |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select concat_ws(',','First name','Last Name');
++-----------------------------------------+
+| concat_ws(',','First name','Last Name') |
++-----------------------------------------+
+| First name,Last Name                    |
++-----------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select conv('a',16,2);
++----------------+
+| conv('a',16,2) |
++----------------+
+| 1010           |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select elt(1, 'ej', 'Heja', 'hej', 'foo');
++------------------------------------+
+| elt(1, 'ej', 'Heja', 'hej', 'foo') |
++------------------------------------+
+| ej                                 |
++------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select export_set(5, 'Y','N', ',',4);
++-------------------------------+
+| export_set(5, 'Y','N', ',',4) |
++-------------------------------+
+| Y,N,Y,N                       |
++-------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select field('ej', 'hej','ej','heja','hej','foo');
++--------------------------------------------+
+| field('ej', 'hej','ej','heja','hej','foo') |
++--------------------------------------------+
+|                                          2 |
++--------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select find_in_set('b','a,b,c,d');
++----------------------------+
+| find_in_set('b','a,b,c,d') |
++----------------------------+
+|                          2 |
++----------------------------+
+1 row in set (0.00 sec)
+
+mysql> select format(12332.123456, 4);
++-------------------------+
+| format(12332.123456, 4) |
++-------------------------+
+| 12,332.1235             |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select hex(255
+    -> select hex(255);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select hex(255)' at line 2
+mysql> select hex(255);
++----------+
+| hex(255) |
++----------+
+| FF       |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select 0*616263;
++----------+
+| 0*616263 |
++----------+
+|        0 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select insert('Quadratic', 3, 4, 'What');
++-----------------------------------+
+| insert('Quadratic', 3, 4, 'What') |
++-----------------------------------+
+| QuWhattic                         |
++-----------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select instr('foobarbar', 'bar');
++---------------------------+
+| instr('foobarbar', 'bar') |
++---------------------------+
+|                         4 |
++---------------------------+
+1 row in set (0.00 sec)
+
+mysql> select left('foobarbar', 5);
++----------------------+
+| left('foobarbar', 5) |
++----------------------+
+| fooba                |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> select length('text');
++----------------+
+| length('text') |
++----------------+
+|              4 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select locate('bar', 'foobarbar');
++----------------------------+
+| locate('bar', 'foobarbar') |
++----------------------------+
+|                          4 |
++----------------------------+
+1 row in set (0.00 sec)
+
+mysql> select lower('quadratically');
++------------------------+
+| lower('quadratically') |
++------------------------+
+| quadratically          |
++------------------------+
+1 row in set (0.00 sec)
+
+mysql> select lpad('hi', 4, '??');
++---------------------+
+| lpad('hi', 4, '??') |
++---------------------+
+| ??hi                |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select ltrim(' barbar');
++------------------+
+| ltrim(' barbar') |
++------------------+
+| barbar           |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select make_set(1, 'a', 'b', 'c');
++----------------------------+
+| make_set(1, 'a', 'b', 'c') |
++----------------------------+
+| a                          |
++----------------------------+
+1 row in set (0.01 sec)
+
+mysql> select oct(12);
++---------+
+| oct(12) |
++---------+
+| 14      |
++---------+
+1 row in set (0.00 sec)
+
+mysql> select ord('2');
++----------+
+| ord('2') |
++----------+
+|       50 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select quote('Don\'t!');
++------------------+
+| quote('Don\'t!') |
++------------------+
+| 'Don\'t!'        |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select 'ABCDEF' regexp 'A%C%%';
++-------------------------+
+| 'ABCDEF' regexp 'A%C%%' |
++-------------------------+
+|                       0 |
++-------------------------+
+1 row in set (0.04 sec)
+
+mysql> select 'ABCDE' regexp '.*';
++---------------------+
+| 'ABCDE' regexp '.*' |
++---------------------+
+|                   1 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select 'new*\n*line' regexp 'new\\*.\\*line';
++---------------------------------------+
+| 'new*\n*line' regexp 'new\\*.\\*line' |
++---------------------------------------+
+|                                     0 |
++---------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select repeat('sql', 3);
++------------------+
+| repeat('sql', 3) |
++------------------+
+| sqlsqlsql        |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select replace('www.mysql.com', 'w', 'Ww');
++-------------------------------------+
+| replace('www.mysql.com', 'w', 'Ww') |
++-------------------------------------+
+| WwWwWw.mysql.com                    |
++-------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select reserve('abcd');
+ERROR 1305 (42000): FUNCTION nit.reserve does not exist
+mysql> select right ('foobarbar', 4);
++------------------------+
+| right ('foobarbar', 4) |
++------------------------+
+| rbar                   |
++------------------------+
+1 row in set (0.00 sec)
+
+mysql> select rpad('hi', 5, '?');
++--------------------+
+| rpad('hi', 5, '?') |
++--------------------+
+| hi???              |
++--------------------+
+1 row in set (0.00 sec)
+
+mysql> select rtrim('barbar  ');
++-------------------+
+| rtrim('barbar  ') |
++-------------------+
+| barbar            |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> select soundex('hello');
++------------------+
+| soundex('hello') |
++------------------+
+| H400             |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> select space(6);
++----------+
+| space(6) |
++----------+
+|          |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select strcmp('MOHD', 'MOHD');
++------------------------+
+| strcmp('MOHD', 'MOHD') |
++------------------------+
+|                      0 |
++------------------------+
+1 row in set (0.00 sec)
+
+mysql> select strcmp('AMOHD','MOHS');
++------------------------+
+| strcmp('AMOHD','MOHS') |
++------------------------+
+|                     -1 |
++------------------------+
+1 row in set (0.00 sec)
+
+mysql> select strcmp('MOHS', 'AMOHD');
++-------------------------+
+| strcmp('MOHS', 'AMOHD') |
++-------------------------+
+|                       1 |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select substring('Quadratically;, 5);
+    '> select substring('Quadratically, 5);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Quadratically, 5)' at line 2
+mysql> select substring('Quadratically, 5);
+    '> select substring('Quadratically', 5);
+    '> select substring('Quadratically', 5);
+    '>
+    '> select substring('foobarbar' from 4);
+    '> select trim('  bar  ');
+    '> system cls;
+    '>
